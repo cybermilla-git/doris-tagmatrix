@@ -6,11 +6,10 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Doris · VTO Style Matrix</title>
 <style>html,body{margin:0;padding:0;background:#000;}</style>
-<!-- Supabase JS SDK (realtime) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-<!-- Doris · VTO Style Matrix — checklist compartilhado por estilo (clima × ocasião), backend Supabase -->
+<!-- Doris · VTO Style Matrix — checklist compartilhado por estilo (clima × ocasião), DONE por gênero, backend Supabase -->
 <div id="doris-app">
   <style>
     #doris-app {
@@ -23,6 +22,7 @@
       --ink-2: #a1a1a6;
       --ink-3: #6e6e73;
       --blue: #3b5bff;
+      --blue-soft: #8fb2ff;
       --coral: #ff7a59;
       --pink: #ff4fa3;
       --green: #30d158;
@@ -30,22 +30,16 @@
       --grad: linear-gradient(90deg, var(--blue) 0%, var(--coral) 55%, var(--pink) 100%);
       --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
       --mono: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, monospace;
-
       font-family: var(--font); color: var(--ink); background: var(--bg);
       -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
       min-height: 100vh; margin: 0; position: relative; overflow-x: hidden;
     }
     #doris-app *, #doris-app *::before, #doris-app *::after { box-sizing: border-box; }
-
-    #doris-app .glow {
-      position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background:
-        radial-gradient(55vw 55vw at 30% -10%, rgba(59,91,255,0.16), transparent 60%),
-        radial-gradient(45vw 45vw at 80% 4%, rgba(255,79,163,0.12), transparent 60%);
-    }
+    #doris-app .glow { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background: radial-gradient(55vw 55vw at 30% -10%, rgba(59,91,255,0.16), transparent 60%),
+                  radial-gradient(45vw 45vw at 80% 4%, rgba(255,79,163,0.12), transparent 60%); }
     #doris-app .wrap { position: relative; z-index: 1; max-width: 940px; margin: 0 auto; padding: 0 20px 120px; }
 
-    /* ---- hero ---- */
     #doris-app .hero { padding: 72px 0 40px; text-align: center; }
     #doris-app .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.34em;
       text-transform: uppercase; color: var(--ink-3); margin: 0 0 26px; }
@@ -62,13 +56,14 @@
     #doris-app .bar > i { display: block; height: 100%; width: 0%; border-radius: 999px;
       background: var(--grad); transition: width .5s cubic-bezier(.2,.8,.2,1); box-shadow: 0 0 18px rgba(255,79,163,0.45); }
     #doris-app .pct { font-family: var(--mono); font-size: 12px; color: var(--ink-3); margin-top: 12px; letter-spacing: .08em; }
+    #doris-app .split { font-family: var(--mono); font-size: 12px; color: var(--ink-3); margin-top: 6px; letter-spacing: .04em; }
+    #doris-app .split .m { color: var(--blue-soft); } #doris-app .split .f { color: var(--pink); }
     #doris-app .sync { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-3);
-      margin-top: 8px; display: inline-flex; align-items: center; gap: 7px; }
+      margin-top: 10px; display: inline-flex; align-items: center; gap: 7px; }
     #doris-app .sync .led { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); }
     #doris-app .sync.on .led { background: var(--green); box-shadow: 0 0 8px var(--green); }
     #doris-app .sync.off .led { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
 
-    /* ---- accordions ---- */
     #doris-app .groups { display: flex; flex-direction: column; gap: 10px; margin-top: 40px; }
     #doris-app .acc { border: 1px solid var(--hair-soft); border-radius: 16px; overflow: hidden;
       background: var(--panel); transition: border-color .18s; }
@@ -85,14 +80,23 @@
     #doris-app .acc.open .chev { transform: rotate(180deg); color: var(--ink-2); }
     #doris-app .acc-head:focus-visible { outline: 2px solid var(--pink); outline-offset: -2px; }
     #doris-app .acc-body { max-height: 0; overflow: hidden; transition: max-height .34s cubic-bezier(.2,.8,.2,1); }
-    #doris-app .acc.open .acc-body { max-height: 4000px; }
+    #doris-app .acc.open .acc-body { max-height: 6000px; }
     #doris-app .acc-inner { display: flex; flex-direction: column; gap: 8px; padding: 4px 14px 16px; }
+
+    /* cabeçalho de colunas (desktop) */
+    #doris-app .col-head { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 14px;
+      padding: 6px 14px 2px; }
+    #doris-app .col-head .labels { display: flex; gap: 8px; }
+    #doris-app .col-head .lab { font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--ink-3); text-align: center; min-width: 104px; }
+    #doris-app .col-head .lab.m { color: var(--blue-soft); }
+    #doris-app .col-head .lab.f { color: var(--pink); }
 
     #doris-app .row { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 14px;
       background: rgba(255,255,255,0.03); border: 1px solid var(--hair-soft); border-radius: 13px;
       padding: 12px 14px; transition: background .18s, border-color .18s; }
     #doris-app .row:hover { background: rgba(255,255,255,0.06); border-color: var(--hair); }
-    #doris-app .row.done { background: rgba(48,209,88,0.06); border-color: rgba(48,209,88,0.22); }
+    #doris-app .row.done-m.done-f { background: rgba(48,209,88,0.06); border-color: rgba(48,209,88,0.22); }
     #doris-app .idx { font-family: var(--mono); font-size: 11px; color: var(--ink-3); text-align: right; }
     #doris-app .combo { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
     #doris-app .tag { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; color: var(--coral);
@@ -100,15 +104,19 @@
     #doris-app .tag.clima { color: var(--coral); background: rgba(255,122,89,0.12); }
     #doris-app .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-3); flex: 0 0 auto; }
 
+    #doris-app .btns { display: flex; gap: 8px; }
     #doris-app .done-btn { appearance: none; cursor: pointer; font-family: var(--font); font-weight: 600;
-      font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
-      display: inline-flex; align-items: center; gap: 7px; padding: 8px 15px; border-radius: 999px;
+      font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 14px; border-radius: 999px;
       border: 1px solid var(--hair); background: transparent; color: var(--ink-2);
-      transition: all .16s ease; flex: 0 0 auto; }
-    #doris-app .done-btn:hover { border-color: rgba(48,209,88,0.55); color: var(--green); }
+      transition: all .16s ease; min-width: 104px; }
+    #doris-app .btn-m:hover { border-color: rgba(143,178,255,0.6); color: var(--blue-soft); }
+    #doris-app .btn-f:hover { border-color: rgba(255,79,163,0.6); color: var(--pink); }
     #doris-app .done-btn .check { width: 14px; height: 14px; display: none; }
-    #doris-app .row.done .done-btn { background: var(--green); border-color: var(--green); color: #00320f; }
-    #doris-app .row.done .done-btn .check { display: block; }
+    #doris-app .btn-g { display: none; }
+    #doris-app .row.done-m .btn-m, #doris-app .row.done-f .btn-f {
+      background: var(--green); border-color: var(--green); color: #00320f; }
+    #doris-app .row.done-m .btn-m .check, #doris-app .row.done-f .btn-f .check { display: block; }
     #doris-app .done-btn:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
 
     #doris-app .footer { margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--hair-soft);
@@ -116,10 +124,13 @@
     #doris-app .footer b { color: var(--ink-2); font-weight: 500; }
     #doris-app .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
-    @media (max-width: 560px) {
-      #doris-app .row { grid-template-columns: 30px 1fr; grid-template-areas: "idx combo" "btn btn"; row-gap: 10px; }
+    @media (max-width: 620px) {
+      #doris-app .col-head { display: none; }
+      #doris-app .row { grid-template-columns: 30px 1fr; grid-template-areas: "idx combo" "btns btns"; row-gap: 10px; }
       #doris-app .idx { grid-area: idx; } #doris-app .combo { grid-area: combo; }
-      #doris-app .done-btn { grid-area: btn; justify-content: center; }
+      #doris-app .btns { grid-area: btns; justify-content: stretch; }
+      #doris-app .done-btn { flex: 1 1 0; min-width: 0; }
+      #doris-app .btn-g { display: inline; }
       #doris-app .acc-name { font-size: 19px; }
     }
     @media (prefers-reduced-motion: reduce) { #doris-app * { transition: none !important; } }
@@ -130,10 +141,11 @@
     <header class="hero">
       <p class="eyebrow">Doris · VTO Style Matrix</p>
       <h1 class="count"><span id="d-done">0</span><span class="total"> / <span id="d-total">0</span></span></h1>
-      <p class="count-label">combinações marcadas como DONE</p>
-      <p class="sub">Expanda cada <b>estilo</b> para ver suas combinações de <b>clima × ocasião</b> e marcá-las como DONE. O estado é compartilhado em tempo real entre todos que abrem o link.</p>
+      <p class="count-label">marcações concluídas (Masculino + Feminino)</p>
+      <p class="sub">Expanda cada <b>estilo</b> para ver suas combinações de <b>clima × ocasião</b>. Cada uma tem DONE separado para <b>Masculino</b> e <b>Feminino</b>. O estado é compartilhado em tempo real.</p>
       <div class="bar"><i id="d-bar"></i></div>
       <p class="pct" id="d-pct">0%</p>
+      <p class="split" id="d-split"><span class="m">Masculino 0/0</span> · <span class="f">Feminino 0/0</span></p>
       <p class="sync" id="d-sync"><span class="led"></span><span id="d-sync-txt">conectando…</span></p>
     </header>
 
@@ -142,31 +154,19 @@
 
     <p class="footer">
       Estado <b>compartilhado em tempo real</b> via Supabase — o que qualquer pessoa marcar aparece para todos.<br>
-      10 estilos × 5 climas × 7 ocasiões = <b id="d-foot-total">0</b> combinações.
+      10 estilos × 5 climas × 7 ocasiões = <b id="d-foot-combos">0</b> combinações · 2 gêneros = <b id="d-foot-total">0</b> marcações.
     </p>
   </div>
 
   <script>
   (function () {
     /* =====================================================================
-       CONFIGURAÇÃO SUPABASE
-       ---------------------------------------------------------------------
-       Cole os dois valores do seu projeto (Settings → API Keys).
-
-       ⚠️  SEGURANÇA — LEIA:
-       • Use SOMENTE a "Publishable key" (formato sb_publishable_...). Ela é
-         feita para o front-end e é segura de expor. (Em projetos antigos, o
-         equivalente é a legacy "anon" key — também funciona aqui.)
-       • NUNCA cole aqui uma "Secret key" (sb_secret_...) nem a antiga
-         service_role: elas ignoram o RLS e dão acesso total ao banco. Se
-         vazarem, revogue no painel. O Supabase inclusive revoga sozinho
-         secret keys detectadas em repositórios públicos do GitHub.
-       • A proteção dos dados NÃO vem de esconder a publishable key (ela é
-         pública), e sim das políticas de RLS da tabela.
-       • Ao hospedar num repositório, prefira injetar estes valores por
-         variável de ambiente / build, em vez de commitar credenciais.
+       CONFIGURAÇÃO SUPABASE  (Settings → API Keys)
+       Use SOMENTE a Publishable key (sb_publishable_...). NUNCA uma secret.
+       A SUPABASE_URL deve ser a RAIZ do projeto — termina em .supabase.co
+       (sem /rest/v1 e sem barra no fim).
        ===================================================================== */
-   var SUPABASE_URL = 'https://ewmnnvgknesgtnoltbls.supabase.co';
+    var SUPABASE_URL = 'https://ewmnnvgknesgtnoltbls.supabase.co';
     var SUPABASE_KEY = 'sb_publishable_tmE05D9XM5bRCP9T7Cigjg_N08FMVYz';
     var TABLE = 'doris_matrix';
     /* ===================================================================== */
@@ -174,51 +174,51 @@
     var estilos   = ["Clássico","Natural","Esportivo","Elegante","Moderno","Criativo","Sexy","Romântico","Minimalista","Trendy"];
     var climas    = ["Very Warm","Warm","Mild","Cold","Very Cold"];
     var ocasioes  = ["Work","Weekend","Training","Lounge","Celebration","Vacation","Holidays"];
-    var PER = climas.length * ocasioes.length;
+    var PER = climas.length * ocasioes.length;      // 35 combinações por estilo
 
-    // combos na mesma ordem do CSV: estilo -> clima -> ocasião
     var combos = [], id = 1;
     for (var e = 0; e < estilos.length; e++)
       for (var c = 0; c < climas.length; c++)
         for (var o = 0; o < ocasioes.length; o++)
           combos.push({ id: id++, estilo: estilos[e], clima: climas[c], ocasiao: ocasioes[o] });
 
-    var TOTAL = combos.length;
-    var done = new Set();
+    var TOTAL = combos.length;      // 350 combinações
+    var TOTAL_MARKS = TOTAL * 2;    // 700 marcações (M + F)
+    var doneM = new Set(), doneF = new Set();
 
     var $ = function (x) { return document.getElementById(x); };
-    $('d-total').textContent = TOTAL;
-    $('d-foot-total').textContent = TOTAL;
+    $('d-total').textContent = TOTAL_MARKS;
+    $('d-foot-combos').textContent = TOTAL;
+    $('d-foot-total').textContent = TOTAL_MARKS;
 
-    /* ---------- conexão Supabase ---------- */
-    var configured = /^https:\/\/.+\.supabase\.co/.test(SUPABASE_URL) &&
+    /* ---------- Supabase ---------- */
+    var configured = /^https:\/\/.+\.supabase\.co$/.test(SUPABASE_URL) &&
                      SUPABASE_KEY.indexOf('COLE_') === -1 && SUPABASE_KEY.length > 20;
     var sdkReady = !!(window.supabase && window.supabase.createClient);
     var online = configured && sdkReady;
     var sb = online ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-    function setSync(state, txt) {
-      var el = $('d-sync'); el.className = 'sync ' + state;
-      $('d-sync-txt').textContent = txt;
-    }
+    function setSync(state, txt) { $('d-sync').className = 'sync ' + state; $('d-sync-txt').textContent = txt; }
 
     async function loadDone() {
       if (!online) return;
       try {
-        var res = await sb.from(TABLE).select('combo_id').eq('done', true);
+        var res = await sb.from(TABLE).select('combo_id,done_m,done_f');
         if (res.error) throw res.error;
-        done.clear();
-        (res.data || []).forEach(function (r) { done.add(String(r.combo_id)); });
+        doneM.clear(); doneF.clear();
+        (res.data || []).forEach(function (r) {
+          if (r.done_m) doneM.add(String(r.combo_id));
+          if (r.done_f) doneF.add(String(r.combo_id));
+        });
       } catch (err) { console.warn('load falhou', err); setSync('off', 'erro ao carregar'); }
     }
 
-    async function persist(idStr, isDone) {
+    async function persist(idStr, gender, isDone) {
       if (!online) return;
       try {
-        var res = await sb.from(TABLE).upsert(
-          { combo_id: parseInt(idStr, 10), done: isDone, updated_at: new Date().toISOString() },
-          { onConflict: 'combo_id' }
-        );
+        var rec = { combo_id: parseInt(idStr, 10), updated_at: new Date().toISOString() };
+        rec[gender === 'm' ? 'done_m' : 'done_f'] = isDone;
+        var res = await sb.from(TABLE).upsert(rec, { onConflict: 'combo_id' });
         if (res.error) throw res.error;
       } catch (err) { console.warn('save falhou', err); }
     }
@@ -229,8 +229,10 @@
         .on('postgres_changes', { event: '*', schema: 'public', table: TABLE }, function (payload) {
           var row = payload.new || payload.old; if (!row) return;
           var idStr = String(row.combo_id);
-          var isDone = payload.new ? !!payload.new.done : false;
-          if (isDone) done.add(idStr); else done.delete(idStr);
+          if (payload.new) {
+            if (payload.new.done_m) doneM.add(idStr); else doneM.delete(idStr);
+            if (payload.new.done_f) doneF.add(idStr); else doneF.delete(idStr);
+          } else { doneM.delete(idStr); doneF.delete(idStr); }
           paintRow(idStr); updateProgress();
         })
         .subscribe(function (status) {
@@ -239,9 +241,18 @@
         });
     }
 
-    /* ---------- render (acordeão por estilo) ---------- */
+    /* ---------- render ---------- */
     var rowEls = {};
     var accByEstilo = {};
+
+    function mkBtn(gender, label, item) {
+      var b = document.createElement('button');
+      b.className = 'done-btn btn-' + gender; b.type = 'button'; b.setAttribute('aria-pressed', 'false');
+      b.innerHTML = '<span class="btn-g">' + label + '</span><svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>DONE</span>';
+      b.setAttribute('aria-label', 'Marcar ' + label + ': ' + item.estilo + ' ' + item.clima + ' ' + item.ocasiao);
+      b.addEventListener('click', function () { toggle(String(item.id), gender); });
+      return b;
+    }
 
     function makeRow(item) {
       var idStr = String(item.id);
@@ -252,14 +263,21 @@
       var d = document.createElement('span'); d.className = 'dot';
       var ocz = document.createElement('span'); ocz.className = 'tag'; ocz.textContent = item.ocasiao;
       combo.append(cli, d, ocz);
-      var btn = document.createElement('button');
-      btn.className = 'done-btn'; btn.type = 'button'; btn.setAttribute('aria-pressed', 'false');
-      btn.innerHTML = '<svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Done</span>';
-      btn.setAttribute('aria-label', 'Marcar ' + item.estilo + ' ' + item.clima + ' ' + item.ocasiao + ' como concluída');
-      btn.addEventListener('click', function () { toggle(idStr); });
-      row.append(idx, combo, btn);
+      var btns = document.createElement('div'); btns.className = 'btns';
+      btns.append(mkBtn('m', 'Masculino', item), mkBtn('f', 'Feminino', item));
+      row.append(idx, combo, btns);
       rowEls[idStr] = row;
       return row;
+    }
+
+    function colHead() {
+      var h = document.createElement('div'); h.className = 'col-head';
+      var s1 = document.createElement('div'); var s2 = document.createElement('div');
+      var labs = document.createElement('div'); labs.className = 'labels';
+      var lm = document.createElement('div'); lm.className = 'lab m'; lm.textContent = 'Masculino';
+      var lf = document.createElement('div'); lf.className = 'lab f'; lf.textContent = 'Feminino';
+      labs.append(lm, lf); h.append(s1, s2, labs);
+      return h;
     }
 
     function buildGroups() {
@@ -269,16 +287,18 @@
         var head = document.createElement('button');
         head.className = 'acc-head'; head.type = 'button'; head.setAttribute('aria-expanded', 'false');
         var name = document.createElement('span'); name.className = 'acc-name'; name.textContent = estilo;
-        var cnt = document.createElement('span'); cnt.className = 'acc-count'; cnt.textContent = '0/' + PER;
+        var cnt = document.createElement('span'); cnt.className = 'acc-count'; cnt.textContent = '0/' + (PER * 2);
         var chev = document.createElement('span'); chev.className = 'chev';
         chev.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
         head.append(name, cnt, chev);
         var body = document.createElement('div'); body.className = 'acc-body';
-        var inner = document.createElement('div'); inner.className = 'acc-inner'; body.appendChild(inner);
+        var inner = document.createElement('div'); inner.className = 'acc-inner';
+        inner.appendChild(colHead());
         var ids = [];
         combos.forEach(function (item) {
           if (item.estilo === estilo) { inner.appendChild(makeRow(item)); ids.push(String(item.id)); }
         });
+        body.appendChild(inner);
         head.addEventListener('click', function () {
           var open = acc.classList.toggle('open');
           head.setAttribute('aria-expanded', open ? 'true' : 'false');
@@ -291,34 +311,42 @@
 
     function paintRow(idStr) {
       var row = rowEls[idStr]; if (!row) return;
-      var on = done.has(idStr);
-      row.classList.toggle('done', on);
-      row.querySelector('.done-btn').setAttribute('aria-pressed', on ? 'true' : 'false');
+      var onM = doneM.has(idStr), onF = doneF.has(idStr);
+      row.classList.toggle('done-m', onM);
+      row.classList.toggle('done-f', onF);
+      row.querySelector('.btn-m').setAttribute('aria-pressed', onM ? 'true' : 'false');
+      row.querySelector('.btn-f').setAttribute('aria-pressed', onF ? 'true' : 'false');
     }
 
-    async function toggle(idStr) {
-      var on = !done.has(idStr);
-      if (on) done.add(idStr); else done.delete(idStr);
+    async function toggle(idStr, gender) {
+      var set = gender === 'm' ? doneM : doneF;
+      var on = !set.has(idStr);
+      if (on) set.add(idStr); else set.delete(idStr);
       paintRow(idStr); updateProgress();
       var item = combos[parseInt(idStr, 10) - 1];
-      $('d-status').textContent = (on ? 'Concluída' : 'Reaberta') + ': ' + item.estilo + ' · ' + item.clima + ' · ' + item.ocasiao;
-      await persist(idStr, on);
+      var label = gender === 'm' ? 'Masculino' : 'Feminino';
+      $('d-status').textContent = (on ? 'Concluída' : 'Reaberta') + ' [' + label + ']: ' + item.estilo + ' · ' + item.clima + ' · ' + item.ocasiao;
+      await persist(idStr, gender, on);
     }
 
     /* ---------- progresso ---------- */
     function updateCounts() {
       estilos.forEach(function (estilo) {
-        var g = accByEstilo[estilo], n = 0;
-        for (var i = 0; i < g.ids.length; i++) if (done.has(g.ids[i])) n++;
-        g.count.textContent = n + '/' + PER;
-        g.acc.classList.toggle('full', n === PER);
+        var g = accByEstilo[estilo], nM = 0, nF = 0;
+        for (var i = 0; i < g.ids.length; i++) {
+          if (doneM.has(g.ids[i])) nM++;
+          if (doneF.has(g.ids[i])) nF++;
+        }
+        g.count.textContent = (nM + nF) + '/' + (PER * 2);
+        g.acc.classList.toggle('full', nM === PER && nF === PER);
       });
     }
     function updateProgress() {
-      var n = done.size, pct = TOTAL ? Math.round((n / TOTAL) * 100) : 0;
+      var n = doneM.size + doneF.size, pct = TOTAL_MARKS ? Math.round((n / TOTAL_MARKS) * 100) : 0;
       $('d-done').textContent = n;
       $('d-bar').style.width = pct + '%';
       $('d-pct').textContent = pct + '% concluído';
+      $('d-split').innerHTML = '<span class="m">Masculino ' + doneM.size + '/' + TOTAL + '</span> · <span class="f">Feminino ' + doneF.size + '/' + TOTAL + '</span>';
       updateCounts();
     }
     function repaintAll() { for (var k in rowEls) paintRow(k); }
@@ -327,15 +355,10 @@
     buildGroups();
     updateProgress();
 
-    if (!configured) {
-      setSync('off', 'configure SUPABASE_URL e ANON_KEY no arquivo');
-    } else if (!sdkReady) {
-      setSync('off', 'SDK do Supabase não carregou (sem internet?)');
-    } else {
-      (async function () {
-        await loadDone(); repaintAll(); updateProgress();
-        subscribeRealtime();
-      })();
+    if (!configured) { setSync('off', 'confira SUPABASE_URL (raiz) e a key no arquivo'); }
+    else if (!sdkReady) { setSync('off', 'SDK do Supabase não carregou (sem internet?)'); }
+    else {
+      (async function () { await loadDone(); repaintAll(); updateProgress(); subscribeRealtime(); })();
       document.addEventListener('visibilitychange', async function () {
         if (!document.hidden) { await loadDone(); repaintAll(); updateProgress(); }
       });
@@ -345,3 +368,5 @@
 </div>
 </body>
 </html>
+
+    
